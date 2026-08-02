@@ -26,16 +26,15 @@
 
   /* ---------- HERO ---------- */
   .hero{
-    min-height:100vh;
-    min-height:100svh;
+  /* 原本: min-height:100vh; min-height:100svh; */
+    padding: 6vh 6vw 2rem; /* 👈 底部 padding 改成小一點的 2rem */
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:6vh 6vw;
     position:relative;
-  }
+    }
   .freq{
     font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.75rem;
@@ -183,7 +182,7 @@
     transition:max-height .5s ease;
   }
   .lyrics-inner{
-    padding:0.8rem 8vw 18vh;
+    padding:1rem 8vw 18vh;
     display:flex;
     gap:2.4rem;
     position:relative;
