@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>候鳥沒有回音 — 紀遇</title>
+<style>
+  :root{
+    --bg-deep:#d7e8f2;
+    --bg-mid:#F0F8FF;
+    --foam:#16283a;
+    --muted:#5f7a8f;
+    --cyan:#2f7f95;
+    --warm:#b8863f;
+    --line: rgba(47,127,149,0.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: radial-gradient(ellipse at 50% -10%, var(--bg-mid) 0%, var(--bg-deep) 55%, #c3dae8 100%);
+    color:var(--foam);
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6vh 6vw;
+    position:relative;
+  }
+  .freq{
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.75rem;
+    letter-spacing:0.35em;
+    color:var(--cyan);
+    opacity:0.75;
+    margin-bottom:2rem;
+    animation:pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:0.4;}
+    50%{opacity:0.9;}
+  }
+  .title{
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-weight:300;
+    font-size:clamp(1.6rem, 4.2vw, 2.4rem);
+    letter-spacing:0.08em;
+    color:var(--foam);
+    margin-bottom:0.9rem;
+  }
+  .artist{
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-weight:300;
+    font-size:0.95rem;
+    letter-spacing:0.25em;
+    color:var(--muted);
+    margin-bottom:1.1rem;
+  }
+  .credits{
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.68rem;
+    letter-spacing:0.12em;
+    color:var(--muted);
+    opacity:0.6;
+    display:flex;
+    gap:1.4rem;
+    margin-bottom:4rem;
+  }
+
+  /* ---------- SONAR / WAVEFORM ---------- */
+  .sonar-wrap{
+    position:relative;
+    width:120px; height:120px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:2.6rem;
+  }
+  .ring{
+    position:absolute;
+    border:1px solid var(--cyan);
+    border-radius:50%;
+    opacity:0;
+    animation:ripple 3.2s ease-out infinite;
+  }
+  .ring:nth-child(2){ animation-delay:1.06s; }
+  .ring:nth-child(3){ animation-delay:2.13s; }
+  @keyframes ripple{
+    0%{ width:56px; height:56px; opacity:0.55; }
+    100%{ width:130px; height:130px; opacity:0; }
+  }
+  .play-btn{
+    position:relative;
+    z-index:2;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:transparent;
+    border:1px solid var(--cyan);
+    color:var(--cyan);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .3s, color .3s;
+  }
+  .play-btn:hover{ background:var(--cyan); color:var(--bg-deep); }
+  .play-btn svg{ width:18px; height:18px; }
+
+  .transport{
+    display:flex; align-items:center; gap:0.8rem;
+    width:min(360px, 80vw);
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.7rem;
+    color:var(--muted);
+  }
+  .bar{
+    flex:1; height:1px; background:var(--line);
+    position:relative; cursor:pointer;
+  }
+  .bar-fill{
+    position:absolute; left:0; top:0; height:100%;
+    background:var(--cyan); width:0%;
+  }
+
+  .scroll-cue{
+    position:absolute; bottom:2.2rem;
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.65rem; letter-spacing:0.3em;
+    color:var(--muted);
+    opacity:0.6;
+  }
+
+  /* ---------- LYRICS ---------- */
+  .lyrics-section{
+    max-width:640px;
+    margin:0 auto;
+    padding:14vh 8vw 22vh;
+    display:flex;
+    gap:2.4rem;
+    position:relative;
+  }
+  .depth-gauge{
+    position:relative;
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.62rem;
+    color:var(--muted);
+    user-select:none;
+    min-width:2.6rem;
+  }
+  .depth-gauge span{
+    position:absolute;
+    right:0;
+    opacity:0.5;
+    white-space:nowrap;
+  }
+  .lyrics{
+    display:flex;
+    flex-direction:column;
+    gap:2.4rem;
+    font-weight:300;
+    font-size:0.9rem;
+  }
+  .stanza{
+    display:flex;
+    flex-direction:column;
+  }
+  .stanza p{
+    color:var(--foam);
+    opacity:0.82;
+    line-height:1.45;
+    margin:0.15rem 0;
+  }
+
+  footer{
+    text-align:center;
+    padding-bottom:8vh;
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.62rem;
+    letter-spacing:0.3em;
+    color:var(--muted);
+    opacity:0.45;
+  }
+
+  ::selection{ background:var(--cyan); color:var(--bg-deep); }
+
+  @media (prefers-reduced-motion: reduce){
+    .ring, .freq{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="freq">52 HZ</div>
+  <h1 class="title">候鳥沒有回音</h1>
+  <div class="credits">
+    <span>曲 · 紀遇</span>
+    <span>詞 · 紀遇</span>
+    <span>製作 · Suno</span>
+  </div>
+
+  <div class="sonar-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <button class="play-btn" id="playBtn" aria-label="播放">
+      <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+    </button>
+  </div>
+
+  <div class="transport">
+    <span id="curTime">0:00</span>
+    <div class="bar" id="seekBar"><div class="bar-fill" id="barFill"></div></div>
+    <span id="durTime">0:00</span>
+  </div>
+
+  <div class="scroll-cue">↓ 往下捲動看歌詞</div>
+</section>
+
+<section class="lyrics-section">
+  <div class="depth-gauge" id="depthGauge"></div>
+  <div class="lyrics" id="lyrics"></div>
+</section>
+
+<footer>NEVER HEARD, ALWAYS SENT</footer>
+
+<audio id="audio" src="song.mp3" preload="metadata"></audio>
+
+<script>
+/* ============================================================
+   使用說明:
+   time 是這句歌詞開始的秒數,目前是依歌曲長度(7:01)和一般
+   主歌/副歌節奏抓的「大概位置」,不是逐句聽出來的精確時間。
+   建議之後邊聽邊微調 time 的數字,抓到準確的進歌詞時機。
+   ============================================================ */
+
+/* ============================================================
+   歌詞就照順序放,不會跟播放進度連動,單純靜態呈現。
+   每個子陣列是一個段落(stanza),段落內行距會比較緊,
+   段落之間留比較大的空白。
+   ============================================================ */
+
+const lyricsData = [
+  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈捎來了荒涼"],
+  ["海不會記得每一次的漲潮", "可我記得你走時穿的那件外套", "時鐘走得太慢又走得太快", "像是誰把過去 藏進了誰的口袋"],
+  ["候鳥飛過南方沒有回音", "它嫌著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
+  ["若候鳥飛過你抬頭的雲端", "請假裝那是我 沒說完的晚安", "哪怕沒有回音 卻還在遠方盤旋", "飛過那些 我來不及送出的春天"],
+  ["我一直都沒走遠", "我只是把想念 折得很小很淺", "小到可以放進琴聲的邊緣", "小到 連你經過都不會發現"],
+  ["若風裡傳來一陣微弱的呼喚", "請假裝那是我 終於說出口的晚安", "就算沒有回音 眷戀一直未散", "一直留在 你聽不見的那片 溫暖"],
+];
+
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('playBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const seekBar = document.getElementById('seekBar');
+const barFill = document.getElementById('barFill');
+const curTimeEl = document.getElementById('curTime');
+const durTimeEl = document.getElementById('durTime');
+const lyricsEl = document.getElementById('lyrics');
+const depthGaugeEl = document.getElementById('depthGauge');
+
+function fmt(s){
+  if(!isFinite(s)) return "0:00";
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+// 建立歌詞 DOM(依段落分組)
+lyricsData.forEach((stanza) => {
+  const stanzaEl = document.createElement('div');
+  stanzaEl.className = 'stanza';
+  stanza.forEach((text) => {
+    const p = document.createElement('p');
+    p.textContent = text;
+    stanzaEl.appendChild(p);
+  });
+  lyricsEl.appendChild(stanzaEl);
+});
+
+// 深度刻度(裝飾用,呼應「深海」意象):每 4 句放一個標記,
+// 位置依實際渲染高度計算,長短句都能對齊
+function layoutDepthGauge(){
+  depthGaugeEl.innerHTML = '';
+  const paragraphs = document.querySelectorAll('.lyrics p');
+  paragraphs.forEach((p, i) => {
+    if(i % 4 !== 0) return;
+    const depth = document.createElement('span');
+    depth.textContent = (i * 40) + 'm';
+    depth.style.top = p.offsetTop + 'px';
+    depthGaugeEl.appendChild(depth);
+  });
+}
+layoutDepthGauge();
+window.addEventListener('resize', layoutDepthGauge);
+window.addEventListener('load', layoutDepthGauge);
+
+playBtn.addEventListener('click', () => {
+  if(audio.paused){
+    audio.play().catch(()=>{ /* 尚未放入音檔時避免報錯中斷 */ });
+  } else {
+    audio.pause();
+  }
+});
+
+audio.addEventListener('play', () => {
+  playIcon.style.display = 'none';
+  pauseIcon.style.display = 'block';
+});
+audio.addEventListener('pause', () => {
+  playIcon.style.display = 'block';
+  pauseIcon.style.display = 'none';
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  durTimeEl.textContent = fmt(audio.duration);
+});
+
+audio.addEventListener('timeupdate', () => {
+  curTimeEl.textContent = fmt(audio.currentTime);
+  const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+  barFill.style.width = pct + '%';
+});
+
+seekBar.addEventListener('click', (e) => {
+  const rect = seekBar.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  if(audio.duration) audio.currentTime = ratio * audio.duration;
+});
+</script>
+
+</body>
+</html>
