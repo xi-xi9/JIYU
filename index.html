@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>候鳥沒有回音 — 紀遇</title>
+<title>JIYU</title>
 <style>
   :root{
     --bg-deep:#d7e8f2;
@@ -121,6 +121,7 @@
   .bar{
     flex:1; height:1px; background:var(--line);
     position:relative; cursor:pointer;
+    touch-action:none;
   }
   .bar::before{
     /* 看不見,只是把可以點/拖拉的範圍往上下各擴大一點,手機上比較好按 */
@@ -235,7 +236,6 @@
     <span id="durTime">0:00</span>
   </div>
 
-  <div class="scroll-cue">↓ 往下捲動看歌詞</div>
 </section>
 
 <section class="lyrics-section">
@@ -262,9 +262,9 @@
    ============================================================ */
 
 const lyricsData = [
-  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈 捎來了荒涼"],
+  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈捎來了荒涼"],
   ["海不會記得每一次的漲潮", "可我記得你走時穿的那件外套", "時鐘走得太慢又走得太快", "像是誰把過去 藏進了誰的口袋"],
-  ["候鳥飛過南方沒有回音", "牠銜著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
+  ["候鳥飛過南方沒有回音", "它嫌著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
   ["若候鳥飛過你抬頭的雲端", "請假裝那是我 沒說完的晚安", "哪怕沒有回音 卻還在遠方盤旋", "飛過那些 我來不及送出的春天"],
   ["我一直都沒走遠", "我只是把想念 折得很小很淺", "小到可以放進琴聲的邊緣", "小到 連你經過都不會發現"],
   ["若風裡傳來一陣微弱的呼喚", "請假裝那是我 終於說出口的晚安", "就算沒有回音 眷戀一直未散", "一直留在 你聽不見的那片 溫暖"],
@@ -357,12 +357,14 @@ let isSeeking = false;
 seekBar.addEventListener('pointerdown', (e) => {
   isSeeking = true;
   seekBar.setPointerCapture(e.pointerId);
+  e.preventDefault();
   const ratio = seekRatioFromEvent(e);
   if(audio.duration) audio.currentTime = ratio * audio.duration;
 });
 
 seekBar.addEventListener('pointermove', (e) => {
   if(!isSeeking) return;
+  e.preventDefault();
   const ratio = seekRatioFromEvent(e);
   if(audio.duration) audio.currentTime = ratio * audio.duration;
 });
