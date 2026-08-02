@@ -357,6 +357,7 @@ const lyricsSection = document.getElementById('lyricsSection');
 const lyricsInner = document.getElementById('lyricsInner');
 let lyricsOpen = false;
 
+// 修正後的程式碼（加入自動平滑滑動）
 lyricsToggle.addEventListener('click', () => {
   lyricsOpen = !lyricsOpen;
   lyricsToggle.classList.toggle('open', lyricsOpen);
@@ -364,6 +365,11 @@ lyricsToggle.addEventListener('click', () => {
   if(lyricsOpen){
     layoutDepthGauge();
     lyricsSection.style.maxHeight = lyricsInner.scrollHeight + 'px';
+    
+    // 🌟 新增：延遲 150 毫秒等待展開動畫啟動後，自動平滑滑動到歌詞區塊
+    setTimeout(() => {
+      lyricsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
   } else {
     lyricsSection.style.maxHeight = '0px';
   }
