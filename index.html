@@ -366,10 +366,14 @@ lyricsToggle.addEventListener('click', () => {
     layoutDepthGauge();
     lyricsSection.style.maxHeight = lyricsInner.scrollHeight + 'px';
     
-    // 🌟 新增：延遲 150 毫秒等待展開動畫啟動後，自動平滑滑動到歌詞區塊
+    // 🌟 算好精確位置再滑過去，完全不會晃動！
     setTimeout(() => {
-      lyricsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
+      const targetPosition = lyricsSection.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+    }, 200); // 稍微給一點點時間讓動畫先拉開
   } else {
     lyricsSection.style.maxHeight = '0px';
   }
