@@ -27,6 +27,7 @@
   /* ---------- HERO ---------- */
   .hero{
     min-height:100vh;
+    min-height:100svh;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -215,6 +216,7 @@
 <section class="hero">
   <div class="freq">52 HZ</div>
   <h1 class="title">候鳥沒有回音</h1>
+  <div class="artist">紀遇</div>
   <div class="credits">
     <span>曲 · 紀遇</span>
     <span>詞 · 紀遇</span>
@@ -236,6 +238,7 @@
     <span id="durTime">0:00</span>
   </div>
 
+  <div class="scroll-cue">↓ 歌詞本</div>
 </section>
 
 <section class="lyrics-section">
@@ -262,7 +265,7 @@
    ============================================================ */
 
 const lyricsData = [
-  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈 捎來了荒涼"],
+  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈捎來了荒涼"],
   ["海不會記得每一次的漲潮", "可我記得你走時穿的那件外套", "時鐘走得太慢又走得太快", "像是誰把過去 藏進了誰的口袋"],
   ["候鳥飛過南方沒有回音", "牠銜著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
   ["若候鳥飛過你抬頭的雲端", "請假裝那是我 沒說完的晚安", "哪怕沒有回音 卻還在遠方盤旋", "飛過那些 我來不及送出的春天"],
@@ -371,6 +374,12 @@ seekBar.addEventListener('pointermove', (e) => {
 
 seekBar.addEventListener('pointerup', () => { isSeeking = false; });
 seekBar.addEventListener('pointercancel', () => { isSeeking = false; });
+
+// 保險機制:部分手機瀏覽器只靠 touch-action 擋不住捲動,
+// 拖拉進行中直接攔截 touchmove。
+document.addEventListener('touchmove', (e) => {
+  if(isSeeking) e.preventDefault();
+}, { passive:false });
 </script>
 
 </body>
