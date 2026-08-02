@@ -84,16 +84,17 @@
   }
   .ring{
     position:absolute;
+    width:56px; height:56px;
     border:1px solid var(--cyan);
     border-radius:50%;
     opacity:0;
-    animation:ripple 3.2s ease-out infinite;
+    animation:ripple 3.6s ease-out infinite;
+    will-change: transform, opacity;
   }
-  .ring:nth-child(2){ animation-delay:1.06s; }
-  .ring:nth-child(3){ animation-delay:2.13s; }
+  .ring:nth-child(2){ animation-delay:1.8s; }
   @keyframes ripple{
-    0%{ width:56px; height:56px; opacity:0.55; }
-    100%{ width:130px; height:130px; opacity:0; }
+    0%{ transform:scale(1); opacity:0.45; }
+    100%{ transform:scale(2.3); opacity:0; }
   }
   .play-btn{
     position:relative;
@@ -121,9 +122,25 @@
     flex:1; height:1px; background:var(--line);
     position:relative; cursor:pointer;
   }
+  .bar::before{
+    /* 看不見,只是把可以點/拖拉的範圍往上下各擴大一點,手機上比較好按 */
+    content:'';
+    position:absolute;
+    left:0; right:0; top:-12px; bottom:-12px;
+  }
   .bar-fill{
     position:absolute; left:0; top:0; height:100%;
     background:var(--cyan); width:0%;
+    pointer-events:none;
+  }
+  .bar-thumb{
+    position:absolute; top:50%; left:0%;
+    width:10px; height:10px;
+    background:var(--cyan);
+    border-radius:50%;
+    transform:translate(-50%, -50%);
+    box-shadow:0 0 0 4px var(--bg-mid);
+    pointer-events:none;
   }
 
   .scroll-cue{
@@ -206,7 +223,6 @@
   <div class="sonar-wrap">
     <div class="ring"></div>
     <div class="ring"></div>
-    <div class="ring"></div>
     <button class="play-btn" id="playBtn" aria-label="播放">
       <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
@@ -215,7 +231,7 @@
 
   <div class="transport">
     <span id="curTime">0:00</span>
-    <div class="bar" id="seekBar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="bar" id="seekBar"><div class="bar-fill" id="barFill"></div><div class="bar-thumb" id="barThumb"></div></div>
     <span id="durTime">0:00</span>
   </div>
 
@@ -246,9 +262,9 @@
    ============================================================ */
 
 const lyricsData = [
-  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈捎來了荒涼"],
+  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈 捎來了荒涼"],
   ["海不會記得每一次的漲潮", "可我記得你走時穿的那件外套", "時鐘走得太慢又走得太快", "像是誰把過去 藏進了誰的口袋"],
-  ["候鳥飛過南方沒有回音", "它嫌著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
+  ["候鳥飛過南方沒有回音", "牠銜著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
   ["若候鳥飛過你抬頭的雲端", "請假裝那是我 沒說完的晚安", "哪怕沒有回音 卻還在遠方盤旋", "飛過那些 我來不及送出的春天"],
   ["我一直都沒走遠", "我只是把想念 折得很小很淺", "小到可以放進琴聲的邊緣", "小到 連你經過都不會發現"],
   ["若風裡傳來一陣微弱的呼喚", "請假裝那是我 終於說出口的晚安", "就算沒有回音 眷戀一直未散", "一直留在 你聽不見的那片 溫暖"],
@@ -260,6 +276,7 @@ const playIcon = document.getElementById('playIcon');
 const pauseIcon = document.getElementById('pauseIcon');
 const seekBar = document.getElementById('seekBar');
 const barFill = document.getElementById('barFill');
+const barThumb = document.getElementById('barThumb');
 const curTimeEl = document.getElementById('curTime');
 const durTimeEl = document.getElementById('durTime');
 const lyricsEl = document.getElementById('lyrics');
@@ -326,13 +343,32 @@ audio.addEventListener('timeupdate', () => {
   curTimeEl.textContent = fmt(audio.currentTime);
   const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
   barFill.style.width = pct + '%';
+  barThumb.style.left = pct + '%';
 });
 
-seekBar.addEventListener('click', (e) => {
+function seekRatioFromEvent(e){
   const rect = seekBar.getBoundingClientRect();
   const ratio = (e.clientX - rect.left) / rect.width;
+  return Math.min(1, Math.max(0, ratio));
+}
+
+let isSeeking = false;
+
+seekBar.addEventListener('pointerdown', (e) => {
+  isSeeking = true;
+  seekBar.setPointerCapture(e.pointerId);
+  const ratio = seekRatioFromEvent(e);
   if(audio.duration) audio.currentTime = ratio * audio.duration;
 });
+
+seekBar.addEventListener('pointermove', (e) => {
+  if(!isSeeking) return;
+  const ratio = seekRatioFromEvent(e);
+  if(audio.duration) audio.currentTime = ratio * audio.duration;
+});
+
+seekBar.addEventListener('pointerup', () => { isSeeking = false; });
+seekBar.addEventListener('pointercancel', () => { isSeeking = false; });
 </script>
 
 </body>
