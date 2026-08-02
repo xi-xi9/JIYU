@@ -145,19 +145,45 @@
     pointer-events:none;
   }
 
-  .scroll-cue{
-    position:absolute; bottom:2.2rem;
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
-    font-size:0.65rem; letter-spacing:0.3em;
+  .lyrics-toggle{
+    background:transparent;
+    border:1px solid var(--line);
     color:var(--muted);
-    opacity:0.6;
+    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
+    font-size:0.75rem;
+    letter-spacing:0.25em;
+    padding:0.65rem 1.6rem;
+    border-radius:999px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:0.6rem;
+    margin-top:3.2rem;
+    transition:background .3s, color .3s, border-color .3s;
+  }
+  .lyrics-toggle:hover{
+    background:var(--line);
+    color:var(--foam);
+  }
+  .lyrics-toggle-arrow{
+    display:inline-block;
+    transition:transform .35s ease;
+    font-size:0.7em;
+  }
+  .lyrics-toggle.open .lyrics-toggle-arrow{
+    transform:rotate(180deg);
   }
 
   /* ---------- LYRICS ---------- */
   .lyrics-section{
     max-width:640px;
     margin:0 auto;
-    padding:14vh 8vw 22vh;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .5s ease;
+  }
+  .lyrics-inner{
+    padding:2.2rem 8vw 18vh;
     display:flex;
     gap:2.4rem;
     position:relative;
@@ -216,7 +242,6 @@
 <section class="hero">
   <div class="freq">52 HZ</div>
   <h1 class="title">候鳥沒有回音</h1>
-  <div class="artist">紀遇</div>
   <div class="credits">
     <span>曲 · 紀遇</span>
     <span>詞 · 紀遇</span>
@@ -238,12 +263,17 @@
     <span id="durTime">0:00</span>
   </div>
 
-  <div class="scroll-cue">↓ 歌詞本</div>
+  <button class="lyrics-toggle" id="lyricsToggle">
+    <span id="lyricsToggleText">歌詞</span>
+    <span class="lyrics-toggle-arrow" id="lyricsToggleArrow">▾</span>
+  </button>
 </section>
 
-<section class="lyrics-section">
-  <div class="depth-gauge" id="depthGauge"></div>
-  <div class="lyrics" id="lyrics"></div>
+<section class="lyrics-section" id="lyricsSection">
+  <div class="lyrics-inner" id="lyricsInner">
+    <div class="depth-gauge" id="depthGauge"></div>
+    <div class="lyrics" id="lyrics"></div>
+  </div>
 </section>
 
 <footer>NEVER HEARD, ALWAYS SENT</footer>
@@ -265,7 +295,7 @@
    ============================================================ */
 
 const lyricsData = [
-  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈捎來了荒涼"],
+  ["窗簾把光切成了細碎的形狀", "我在其中一格尋找你的模樣", "昨夜的月亮投下一抹微光", "它繞了地球一圈 捎來了荒涼"],
   ["海不會記得每一次的漲潮", "可我記得你走時穿的那件外套", "時鐘走得太慢又走得太快", "像是誰把過去 藏進了誰的口袋"],
   ["候鳥飛過南方沒有回音", "牠銜著一顆種子 尋找一片森林", "我把心事全寫進了樂音", "唱給風 唱給雲 唱給遠方的你"],
   ["若候鳥飛過你抬頭的雲端", "請假裝那是我 沒說完的晚安", "哪怕沒有回音 卻還在遠方盤旋", "飛過那些 我來不及送出的春天"],
@@ -320,6 +350,31 @@ function layoutDepthGauge(){
 layoutDepthGauge();
 window.addEventListener('resize', layoutDepthGauge);
 window.addEventListener('load', layoutDepthGauge);
+
+// 歌詞展開/收合
+const lyricsToggle = document.getElementById('lyricsToggle');
+const lyricsSection = document.getElementById('lyricsSection');
+const lyricsInner = document.getElementById('lyricsInner');
+let lyricsOpen = false;
+
+lyricsToggle.addEventListener('click', () => {
+  lyricsOpen = !lyricsOpen;
+  lyricsToggle.classList.toggle('open', lyricsOpen);
+
+  if(lyricsOpen){
+    layoutDepthGauge();
+    lyricsSection.style.maxHeight = lyricsInner.scrollHeight + 'px';
+    setTimeout(() => {
+      lyricsSection.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 260);
+  } else {
+    lyricsSection.style.maxHeight = '0px';
+  }
+});
+
+window.addEventListener('resize', () => {
+  if(lyricsOpen) lyricsSection.style.maxHeight = lyricsInner.scrollHeight + 'px';
+});
 
 playBtn.addEventListener('click', () => {
   if(audio.paused){
