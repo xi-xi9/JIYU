@@ -206,6 +206,7 @@
     right:0;
     opacity:0.5;
     white-space:nowrap;
+    line-height:1;
   }
   .lyrics{
     display:flex;
@@ -378,16 +379,19 @@ lyricsData.forEach((stanza) => {
   lyricsEl.appendChild(stanzaEl);
 });
 
-// 深度刻度(裝飾用,呼應「深海」意象):每 4 句放一個標記,
-// 位置依實際渲染高度計算,長短句都能對齊
+// 深度刻度(裝飾用,呼應「深海」意象):
+// 改成「每個段落對齊一個刻度」,而不是每 4 行硬切一次。
+// 原本的做法是把所有歌詞行攤平後每 4 行標一次,但每段行數
+// 不一致(2 行、3 行、4 行都有),導致標記常常落在段落中間,
+// 視覺上高低不一、很凌亂。現在改成刻度直接對齊每個 .stanza
+// 的頂端,數字則依段落順序遞增,看起來會整齊很多。
 function layoutDepthGauge(){
   depthGaugeEl.innerHTML = '';
-  const paragraphs = document.querySelectorAll('.lyrics p');
-  paragraphs.forEach((p, i) => {
-    if(i % 4 !== 0) return;
+  const stanzaEls = document.querySelectorAll('.stanza');
+  stanzaEls.forEach((stanzaEl, i) => {
     const depth = document.createElement('span');
-    depth.textContent = (i * 40) + 'm';
-    depth.style.top = p.offsetTop + 'px';
+    depth.textContent = ((i + 1) * 120) + 'm';
+    depth.style.top = stanzaEl.offsetTop + 'px';
     depthGaugeEl.appendChild(depth);
   });
 }
