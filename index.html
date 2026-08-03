@@ -11,20 +11,20 @@
   <meta property="og:image:type" content="image/png">
 </head>
 <style>
-    :root{
-    --bg-deep:#d7e8f2;
-    --bg-mid:#F0F8FF;
+  :root{
+    --bg-deep:#c7d1db;
+    --bg-mid:#edf0f2;
+    --bg-outer:#72a0c5;
     --foam:#16283a;
     --muted:#5f7a8f;
-    --cyan:#2f7f95;
+    --cyan:#3b71b0;
     --warm:#b8863f;
-    --line: rgba(47,127,149,0.18);
+    --line: rgba(59,113,176,0.18);
   }
-
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    background: radial-gradient(ellipse at 50% -10%, var(--bg-mid) 0%, var(--bg-deep) 55%, #c3dae8 100%);
+    background: var(--bg-deep);
     color:var(--foam);
     font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     min-height:100vh;
@@ -42,6 +42,17 @@
     text-align:center;
     position:relative;
     }
+  .hero::before{
+    content:'';
+    position:absolute;
+    top:-5%; left:50%;
+    transform:translateX(-50%);
+    width:520px; height:520px;
+    background: radial-gradient(circle, var(--bg-mid) 0%, rgba(235,240,244,0) 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .hero > *{ position:relative; z-index:1; }
   .freq{
     font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.75rem;
@@ -110,8 +121,8 @@
     border-radius:50%;
     overflow:hidden;
     box-shadow:
-      0 0 0 1px rgba(47,127,149,0.3),
-      0 12px 28px -10px rgba(22,40,58,0.45);
+      0 0 0 1px rgba(59,113,176,0.18),
+      0 10px 24px -12px rgba(22,40,58,0.32);
   }
   .disc img{
     display:block;
