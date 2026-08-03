@@ -22,13 +22,17 @@
     --line: rgba(59,113,176,0.18);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  html{
+    scroll-behavior:smooth;
+    overflow-x:hidden;
+    width:100%;
+  }
   body{
     background: var(--bg-deep);
     color:var(--foam);
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     min-height:100vh;
     overflow-x:hidden;
+    width:100%;
   }
 
   /* ---------- HERO ---------- */
@@ -48,13 +52,13 @@
     top:-5%; left:50%;
     transform:translateX(-50%);
     width:520px; height:520px;
+    max-width:100vw;
     background: radial-gradient(circle, var(--bg-mid) 0%, rgba(235,240,244,0) 70%);
     pointer-events:none;
     z-index:0;
   }
   .hero > *{ position:relative; z-index:1; }
   .freq{
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.75rem;
     letter-spacing:0.35em;
     color:var(--cyan);
@@ -67,7 +71,6 @@
     50%{opacity:0.9;}
   }
   .title{
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-weight:300;
     font-size:clamp(1.6rem, 4.2vw, 2.4rem);
     letter-spacing:0.08em;
@@ -75,7 +78,6 @@
     margin-bottom:0.9rem;
   }
   .artist{
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-weight:300;
     font-size:0.95rem;
     letter-spacing:0.25em;
@@ -83,7 +85,6 @@
     margin-bottom:1.1rem;
   }
   .credits{
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.68rem;
     letter-spacing:0.12em;
     color:var(--muted);
@@ -150,7 +151,6 @@
   .transport{
     display:flex; align-items:center; gap:0.7rem;
     width:min(360px, 80vw);
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.7rem;
     color:var(--muted);
   }
@@ -184,7 +184,6 @@
     background:transparent;
     border:1px solid var(--line);
     color:var(--muted);
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.75rem;
     letter-spacing:0.25em;
     padding:0.65rem 1.6rem;
@@ -225,7 +224,6 @@
   }
   .depth-gauge{
     position:relative;
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.62rem;
     color:var(--muted);
     user-select:none;
@@ -259,7 +257,6 @@
   footer{
     text-align:center;
     padding-bottom:8vh;
-    font-family:'標楷體','DFKai-SB','BiauKai','STKaiti','KaiTi',serif;
     font-size:0.62rem;
     letter-spacing:0.3em;
     color:var(--muted);
@@ -419,11 +416,8 @@ lyricsData.forEach((stanza) => {
 });
 
 // 深度刻度(裝飾用,呼應「深海」意象):
-// 改成「每個段落對齊一個刻度」,而不是每 4 行硬切一次。
-// 原本的做法是把所有歌詞行攤平後每 4 行標一次,但每段行數
-// 不一致(2 行、3 行、4 行都有),導致標記常常落在段落中間,
-// 視覺上高低不一、很凌亂。現在改成刻度直接對齊每個 .stanza
-// 的頂端,數字則依段落順序遞增,看起來會整齊很多。
+// 依每個 stanza 實際的垂直位置換算深度,而不是靠第幾段硬編號,
+// 這樣段落間距的視覺高度才會跟深度數字的差距成比例。
 function layoutDepthGauge(){
   depthGaugeEl.innerHTML = '';
   const stanzaEls = document.querySelectorAll('.stanza');
