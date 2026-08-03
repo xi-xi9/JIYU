@@ -427,9 +427,11 @@ lyricsData.forEach((stanza) => {
 function layoutDepthGauge(){
   depthGaugeEl.innerHTML = '';
   const stanzaEls = document.querySelectorAll('.stanza');
-  stanzaEls.forEach((stanzaEl, i) => {
+  const pxPerMeter = 2.4; // 可依视觉效果微调，数字越小深度增加越快
+  stanzaEls.forEach((stanzaEl) => {
     const depth = document.createElement('span');
-    depth.textContent = ((i + 1) * 120) + 'm';
+    const meters = Math.round((stanzaEl.offsetTop / pxPerMeter) / 10) * 10;
+    depth.textContent = meters + 'm';
     depth.style.top = stanzaEl.offsetTop + 'px';
     depthGaugeEl.appendChild(depth);
   });
